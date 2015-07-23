@@ -6,3 +6,10 @@
       in the study.  
       Data Prep Note: subject was taken from one of two separate text files and combined with the larger data  
       set via the cbind() function.
+      
+#####Variable 02          
+    activity          
+      Description: activity is an character string used to represent one of the six activities (e.g. 'Walking')     
+      in the study.  
+      Data Prep Note: activity was taken from one of two separate text files and combined with the larger data  
+      set via the cbind() function.      
