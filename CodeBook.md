@@ -1,7 +1,9 @@
 #Code Book For Tidy Data
 
+##Data Set Variables
+
 #####Variable 01          
-    subject      
+    ######subject      
       Description: subject is an integer with a range from 1 to 30 used to represent one of the 30 subjects  
       in the study.  
       
