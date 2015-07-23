@@ -1,4 +1,4 @@
-# TidyData
+# TidyData Final Project
 
 ######This is a repo for the final course project for the "Getting and Cleaning Data" offering from Coursera.
 
@@ -32,55 +32,44 @@ To achieve this aggregation, the script uses the ddply() function against the da
 
 Below is the single R script used to generate the final curated data set with 180 observations and 68 variables representing the mean values of all the mean and standard deviation smartphone recordings for each set of activites performed by the 30 subjects in the study: 
 
-#####verify whether the data already exists in the current working directory.
+#####verify whether the data already exists in the current working directory
 if(!file.exists("./UCI HAR Dataset"))
 {
     zipFile <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
     download.file(zipFile, destfile = "uci_data.zip")
     unzip("uci_data.zip") 
 }
-
 #####load the plyr and dply packages
 library(plyr)
 library(dplyr)
-
-#####load test data.
+#####load test data
 fp_x_test <- read.table("./UCI HAR Dataset/test/X_test.txt")
 fp_s_test <- read.table("./UCI HAR Dataset/test/subject_test.txt")
 fp_y_test <- read.table("./UCI HAR Dataset/test/y_test.txt")
-
-#####load training data.
+#####load training data
 fp_x_train <- read.table("./UCI HAR Dataset/train/X_train.txt")
 fp_s_train <- read.table("./UCI HAR Dataset/train/subject_train.txt")
 fp_y_train <- read.table("./UCI HAR Dataset/train/y_train.txt")
-
-#####rename test data columns.
+#####rename test data columns
 fp_y_test <- rename(fp_y_test, activity = V1) 
 fp_s_test <- rename(fp_s_test, subject = V1)
-
-#####rename training data columns.
+#####rename training data columns
 fp_y_train <- rename(fp_y_train, activity = V1) 
 fp_s_train <- rename(fp_s_train, subject = V1)
-
-#####build single test data set from different files.
+#####build single test data set from different files
 fp_x_test <- cbind(fp_y_test, fp_x_test) # add activity column to base data table.The
 fp_x_test <- cbind(fp_s_test, fp_x_test) # add subject column to base data table.
-
-#####build single training data set from different files.
+#####build single training data set from different files
 fp_x_train <- cbind(fp_y_train, fp_x_train) # add activity column to base data table.
 fp_x_train <- cbind(fp_s_train, fp_x_train) # add subject column to base data table.
-
-#####combine test and training data.
+#####combine test and training data
 fp_x_combined <- rbind(fp_x_test, fp_x_train)
-
-#####order combined data set.
+#####order combined data set
 fp_x_combined <- arrange(fp_x_combined, subject, activity)
-
-#####drop all columns that do not pertain to the mean() or std() headings.
+#####drop all columns that do not pertain to the mean() or std() headings
 fp_x_combined <- select(fp_x_combined, 1:8, 43:48, 83:88, 123:128, 163:168, 203:204, 216:217, 
     229:230, 242:243, 255:256, 268:273, 347:352, 426:431, 505:506, 518:519, 531:532, 544:545)
-
-#####rename all remaining mean() and std() columns.
+#####rename all remaining mean() and std() columns
 fp_x_combined <- rename(fp_x_combined,
     "Time_BodyAcc_Mean_X" = V1,
     "Time_BodyAcc_Mean_Y" = V2,
@@ -149,17 +138,14 @@ fp_x_combined <- rename(fp_x_combined,
     "Frequency_BodyBodyGyroJerkMag_Mean" = V542,
     "Frequency_BodyBodyGyroJerkMag_STD" = V543  
 )
-
-#####replace the activity codes with meaningful strings.
+#####replace the activity codes with meaningful strings
 fp_x_combined$activity[fp_x_combined$activity == 1] <- "Walking" 
 fp_x_combined$activity[fp_x_combined$activity == 2] <- "Walking Upstairs" 
 fp_x_combined$activity[fp_x_combined$activity == 3] <- "Walking Downstairs" 
 fp_x_combined$activity[fp_x_combined$activity == 4] <- "Sitting" 
 fp_x_combined$activity[fp_x_combined$activity == 5] <- "Standing" 
 fp_x_combined$activity[fp_x_combined$activity == 6] <- "Laying" 
-
-#####generate aggregate values based on subject and activity so the 10,299 observations are summarized 
-#####as 180 obeservations (30 subjects, each with 6 activities)
+#####generate aggregate values based on subject and activity so the 10,299 observations are summarized as 180 observations (30 subjects, each with 6 activities)
 fp_tidy_data <- ddply(fp_x_combined, c("subject", "activity"), summarize, 
     Time_BodyAcc_Mean_X = mean(Time_BodyAcc_Mean_X), 
     Time_BodyAcc_Mean_Y = mean(Time_BodyAcc_Mean_Y),
